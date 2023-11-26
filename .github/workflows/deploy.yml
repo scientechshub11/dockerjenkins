@@ -1,10 +1,13 @@
 name: Build and Push Docker image to Docker Hub
 
-on: push
+on: 
+  push:
+    branches: ['master']
+
 jobs:
-  push_to_registry:
-    name: Push Docker image to Docker Hub
+  build: 
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
@@ -16,8 +19,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
     
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: scientechshub11/docker-node:latest
+        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/docker-node
+      - name: Docker Push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-node
